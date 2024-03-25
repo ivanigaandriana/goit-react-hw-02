@@ -1,0 +1,20 @@
+
+ .deskriptionContent{
+    padding: 20px;
+    position: absolute;
+    top: 0; /* Встановлюємо верхню границю контенту */
+  left: 0; 
+ }
+ .deskriptionTitle{
+font-family: 'Times New Roman', Times, serif;
+text-align: left;
+font-size: 50px;
+font-weight:700;
+color: black;
+}
+.deskriptionText{
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 25px;
+    font-weight:400;
+color: black;
+}

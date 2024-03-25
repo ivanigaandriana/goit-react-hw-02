@@ -1,0 +1,12 @@
+.feedbackContainer{
+    position: absolute;
+    padding: 20px;
+top :250px;
+  left: 0; 
+}
+.feedbackList{
+    text-decoration: none;
+    list-style: none;
+    text-align: left;
+   
+}

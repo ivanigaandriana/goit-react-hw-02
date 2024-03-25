@@ -1,0 +1,10 @@
+.optionsContainer{
+    padding: 20px;
+    position: absolute;
+top :200px;
+  left: 0; 
+}
+button{
+    background-color: darkgray;
+    
+}

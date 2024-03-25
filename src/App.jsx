@@ -1,35 +1,48 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import Deskription from './components/Description/Deskription'
+import Feedback from './components/Feedback/Feedback';
+import Options  from './components/Options/Options';
+import Notification from './components/Notification/Notification';
+import 'modern-normalize';
 import './App.css'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [feedbackTypes, setFeedbackTypes] = useState({
+    good: 0,
+    neutral: 0,
+    bad: 0,
+  });
+
+  const [feedbackCollected, setFeedbackCollected] = useState(false); // Відстежує, чи були натискані кнопки збереження відгуків (Good, Neutral, Bad)
+  const [feedbackProvided, setFeedbackProvided] = useState(false); // Відстежує, чи було надано якийсь відгук
+
+  const updateFeedback = feedbackType => {
+    setFeedbackCollected(true); // Відзначаємо, що були натискані кнопки збереження відгуків
+    setFeedbackTypes(prevState => ({
+      ...prevState,
+      [feedbackType]: prevState[feedbackType] + 1
+    }));
+    setFeedbackProvided(true); // Відзначаємо, що було надано якийсь відгук
+  };
+
+  const resetFeedback = () => {
+    setFeedbackTypes({
+      good: 0,
+      neutral: 0,
+      bad: 0
+    });
+    setFeedbackCollected(false);
+    setFeedbackProvided(false); // Збираємо назад в стан, щоб показати, що відгуків більше немає
+  };
 
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <Deskription />
+      <Options updateFeedback={updateFeedback} resetFeedback={resetFeedback} visibleReset={feedbackCollected} />
+      {!feedbackProvided && !feedbackCollected && <Notification />} {/* Показуємо Notification, якщо жодного відгуку ще не надавали */}
+      {feedbackProvided && <Feedback feedback={feedbackTypes} />} {/* Показуємо Feedback, якщо був наданий хоча б один відгук */}
     </>
-  )
+  );
 }
 
-export default App
+export default App;

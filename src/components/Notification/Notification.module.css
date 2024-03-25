@@ -1,0 +1,8 @@
+.notification{
+    list-style: none;
+    padding: 30px;
+    position: absolute;
+    top: 250px; 
+  left: 0; 
+    text-align: left;
+}
