@@ -1,10 +1,11 @@
-import { useState } from 'react'
-import Deskription from './components/Description/Deskription'
+
+import { useState, useEffect } from 'react';
+import Deskription from './components/Description/Deskription';
 import Feedback from './components/Feedback/Feedback';
-import Options  from './components/Options/Options';
+import Options from './components/Options/Options';
 import Notification from './components/Notification/Notification';
 import 'modern-normalize';
-import './App.css'
+import './App.css';
 
 function App() {
   const [feedbackTypes, setFeedbackTypes] = useState({
@@ -13,16 +14,24 @@ function App() {
     bad: 0,
   });
 
-  const [feedbackCollected, setFeedbackCollected] = useState(false); // Відстежує, чи були натискані кнопки збереження відгуків (Good, Neutral, Bad)
-  const [feedbackProvided, setFeedbackProvided] = useState(false); // Відстежує, чи було надано якийсь відгук
+  const [resetClicked, setResetClicked] = useState(false); 
+
+  useEffect(() => {
+    const savedFeedback = localStorage.getItem('feedback');
+    if (savedFeedback) {
+      setFeedbackTypes(JSON.parse(savedFeedback));
+      if (JSON.parse(savedFeedback).good + JSON.parse(savedFeedback).neutral + JSON.parse(savedFeedback).bad === 0) {
+        setResetClicked(true);
+      }
+    }
+  }, []);
 
   const updateFeedback = feedbackType => {
-    setFeedbackCollected(true); // Відзначаємо, що були натискані кнопки збереження відгуків
     setFeedbackTypes(prevState => ({
       ...prevState,
       [feedbackType]: prevState[feedbackType] + 1
     }));
-    setFeedbackProvided(true); // Відзначаємо, що було надано якийсь відгук
+    setResetClicked(false); // Змінюємо стан resetClicked на false при оновленні відгуку
   };
 
   const resetFeedback = () => {
@@ -31,16 +40,24 @@ function App() {
       neutral: 0,
       bad: 0
     });
-    setFeedbackCollected(false);
-    setFeedbackProvided(false); // Збираємо назад в стан, щоб показати, що відгуків більше немає
+    setResetClicked(true); 
   };
+
+  const totalFeedback = feedbackTypes.good + feedbackTypes.neutral + feedbackTypes.bad;
+
+  const positiveFeedback = totalFeedback === 0 ? 0 : Math.round((feedbackTypes.good / totalFeedback) * 100);
+
+  useEffect(() => {
+    localStorage.setItem('feedback', JSON.stringify(feedbackTypes));
+  }, [feedbackTypes]);
 
   return (
     <>
       <Deskription />
-      <Options updateFeedback={updateFeedback} resetFeedback={resetFeedback} visibleReset={feedbackCollected} />
-      {!feedbackProvided && !feedbackCollected && <Notification />} {/* Показуємо Notification, якщо жодного відгуку ще не надавали */}
-      {feedbackProvided && <Feedback feedback={feedbackTypes} />} {/* Показуємо Feedback, якщо був наданий хоча б один відгук */}
+      <Options updateFeedback={updateFeedback} resetFeedback={resetFeedback} visibleReset={totalFeedback > 0} />
+      {(resetClicked && totalFeedback === 0) && <Notification />}
+      {/* Умовний рендеринг для компонента Feedback */}
+      {(!resetClicked || totalFeedback > 0) && <Feedback feedback={feedbackTypes} totalFeedback={totalFeedback} positiveFeedback={positiveFeedback} />}
     </>
   );
 }
