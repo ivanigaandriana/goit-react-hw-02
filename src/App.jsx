@@ -14,15 +14,12 @@ function App() {
     bad: 0,
   });
 
-  const [resetClicked, setResetClicked] = useState(false); 
-
+  
   useEffect(() => {
     const savedFeedback = localStorage.getItem('feedback');
     if (savedFeedback) {
       setFeedbackTypes(JSON.parse(savedFeedback));
-      if (JSON.parse(savedFeedback).good + JSON.parse(savedFeedback).neutral + JSON.parse(savedFeedback).bad === 0) {
-        setResetClicked(true);
-      }
+      
     }
   }, []);
 
@@ -31,7 +28,7 @@ function App() {
       ...prevState,
       [feedbackType]: prevState[feedbackType] + 1
     }));
-    setResetClicked(false); // Змінюємо стан resetClicked на false при оновленні відгуку
+    
   };
 
   const resetFeedback = () => {
@@ -40,7 +37,7 @@ function App() {
       neutral: 0,
       bad: 0
     });
-    setResetClicked(true); 
+  
   };
 
   const totalFeedback = feedbackTypes.good + feedbackTypes.neutral + feedbackTypes.bad;
@@ -55,9 +52,9 @@ function App() {
     <>
       <Deskription />
       <Options updateFeedback={updateFeedback} resetFeedback={resetFeedback} visibleReset={totalFeedback > 0} />
-      {(resetClicked && totalFeedback === 0) && <Notification />}
+      {( totalFeedback === 0) && <Notification />}
       {/* Умовний рендеринг для компонента Feedback */}
-      {(!resetClicked || totalFeedback > 0) && <Feedback feedback={feedbackTypes} totalFeedback={totalFeedback} positiveFeedback={positiveFeedback} />}
+      {(totalFeedback > 0) && <Feedback feedback={feedbackTypes} totalFeedback={totalFeedback} positiveFeedback={positiveFeedback} />}
     </>
   );
 }
